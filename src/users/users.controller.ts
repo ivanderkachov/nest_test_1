@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Console } from 'console';
 import { INTEGER } from 'sequelize';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles-auth.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
@@ -21,6 +24,7 @@ export class UsersController {
 
   @ApiOperation({ summary: "Get all users" })
   @ApiResponse({ status: 200, type: [User] })
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll() {
     return this.userService.getAllusers();
@@ -28,6 +32,8 @@ export class UsersController {
 
   @ApiOperation({ summary: "Delete user" })
   @ApiResponse({ status: 200 })
+  @Roles("Admin")
+  @UseGuards(RolesGuard)
   @Delete(":id")
   deleteUser(@Param() params) {
     return this.userService.deleteUser(params.id);
