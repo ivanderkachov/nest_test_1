@@ -39,7 +39,7 @@ export class UsersService {
     const user = await this.userRepository.findByPk(dto.userId)
     const role = await this.roleService.getRoleByValue(dto.value)
     if (role && user) {
-      await user.$add('role', role.id)
+      await user.$add('roles', role.id)
       return dto
     }
     throw new HttpException('User or Role do not exist', HttpStatus.NOT_FOUND)
